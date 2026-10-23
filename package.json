@@ -2,9 +2,9 @@
   "name": "veeramani-auto-rush",
   "version": "1.0.0",
   "description": "Veeramani Auto Rush Endless Runner Game",
-  "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "build": "echo 'Static build ready'"
   },
   "keywords": [
     "game",
