@@ -153,11 +153,30 @@ class VeeramaniGame {
 
   resizeCanvas() {
     const container = this.canvas.parentElement;
+    if (!container) return;
     const rect = container.getBoundingClientRect();
-    const dpr = window.devicePixelRatio || 1;
+    if (!rect.width || !rect.height) return;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
 
     this.canvas.width = rect.width * dpr;
     this.canvas.height = rect.height * dpr;
+
+    // Calculate dynamic V_HEIGHT maintaining exact aspect ratio with V_WIDTH (960)
+    // Desktop widescreen = 380, mobile portrait 16:9 = 540, 16:10 = 600
+    const aspect = rect.width / rect.height;
+    this.V_HEIGHT = Math.max(380, Math.round(this.V_WIDTH / aspect));
+    this.CANVAS_HEIGHT = this.V_HEIGHT;
+    this.GROUND_Y = this.V_HEIGHT - 70;
+
+    if (this.player) {
+      this.player.baseY = this.GROUND_Y - this.player.height;
+      if (this.player.isGrounded && !this.player.isJumping) {
+        this.player.y = this.player.isDucking ? (this.GROUND_Y - this.player.duckHeight) : this.player.baseY;
+      }
+    }
+    if (this.swiggy) {
+      this.swiggy.y = this.GROUND_Y - 60;
+    }
 
     this.scaleX = (rect.width * dpr) / this.V_WIDTH;
     this.scaleY = (rect.height * dpr) / this.V_HEIGHT;
@@ -226,6 +245,7 @@ class VeeramaniGame {
       btnHorn.addEventListener('pointerdown', (e) => {
         e.preventDefault();
         this.blastHorn();
+        if (navigator.vibrate) try { navigator.vibrate(25); } catch (_) {}
       });
     }
 
@@ -234,6 +254,7 @@ class VeeramaniGame {
         e.preventDefault();
         this.keys['jump'] = true;
         this.handleJumpPress();
+        if (navigator.vibrate) try { navigator.vibrate(15); } catch (_) {}
       });
       btnJump.addEventListener('pointerup', () => {
         this.keys['jump'] = false;
@@ -250,6 +271,7 @@ class VeeramaniGame {
         e.preventDefault();
         this.keys['duck'] = true;
         this.handleDuckPress();
+        if (navigator.vibrate) try { navigator.vibrate(15); } catch (_) {}
       });
       btnDuck.addEventListener('pointerup', () => {
         this.keys['duck'] = false;
@@ -261,17 +283,30 @@ class VeeramaniGame {
       });
     }
 
-    // Canvas click/touch
+    // Canvas click, touch & swipe gestures
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchStartTime = 0;
+    let swipeTriggered = false;
+    let lastTapTime = 0;
+
     this.canvas.addEventListener('pointerdown', (e) => {
       if (this.state === 'PLAYING') {
-        const rect = this.canvas.getBoundingClientRect();
-        const clientY = e.clientY - rect.top;
-        if (clientY > rect.height * 0.75) {
-          this.keys['duck'] = true;
-          this.handleDuckPress();
-        } else {
-          this.keys['jump'] = true;
-          this.handleJumpPress();
+        touchStartX = e.clientX;
+        touchStartY = e.clientY;
+        touchStartTime = Date.now();
+        swipeTriggered = false;
+
+        if (e.pointerType === 'mouse') {
+          const rect = this.canvas.getBoundingClientRect();
+          const clientY = e.clientY - rect.top;
+          if (clientY > rect.height * 0.75) {
+            this.keys['duck'] = true;
+            this.handleDuckPress();
+          } else {
+            this.keys['jump'] = true;
+            this.handleJumpPress();
+          }
         }
       } else if (this.state === 'START' || this.state === 'GAMEOVER') {
         e.preventDefault();
@@ -279,15 +314,64 @@ class VeeramaniGame {
       }
     });
 
-    this.canvas.addEventListener('pointermove', () => {
+    this.canvas.addEventListener('pointermove', (e) => {
       if (this.state === 'GAMEOVER' || this.state === 'START') {
         this.canvas.style.cursor = 'pointer';
       } else {
         this.canvas.style.cursor = 'default';
       }
+
+      if (this.state === 'PLAYING' && e.pointerType !== 'mouse' && !swipeTriggered) {
+        const deltaY = e.clientY - touchStartY;
+        const deltaX = e.clientX - touchStartX;
+
+        // Swipe Down -> Slide/Duck under obstacles
+        if (deltaY > 26 && Math.abs(deltaY) > Math.abs(deltaX)) {
+          swipeTriggered = true;
+          this.keys['duck'] = true;
+          this.handleDuckPress();
+          if (navigator.vibrate) try { navigator.vibrate(15); } catch (_) {}
+        }
+        // Swipe Up -> Turbo Jump over obstacles
+        else if (deltaY < -26 && Math.abs(deltaY) > Math.abs(deltaX)) {
+          swipeTriggered = true;
+          this.keys['jump'] = true;
+          this.handleJumpPress();
+          if (navigator.vibrate) try { navigator.vibrate(15); } catch (_) {}
+        }
+      }
     });
 
-    this.canvas.addEventListener('pointerup', () => {
+    this.canvas.addEventListener('pointerup', (e) => {
+      if (this.state === 'PLAYING' && e.pointerType !== 'mouse' && !swipeTriggered) {
+        const elapsed = Date.now() - touchStartTime;
+        const deltaY = Math.abs(e.clientY - touchStartY);
+        const deltaX = Math.abs(e.clientX - touchStartX);
+
+        // Quick Tap detected on touch device
+        if (elapsed < 300 && deltaX < 20 && deltaY < 20) {
+          const now = Date.now();
+          if (now - lastTapTime < 320) {
+            // Double Tap -> Horn Blast!
+            this.blastHorn();
+            lastTapTime = 0;
+            if (navigator.vibrate) try { navigator.vibrate(25); } catch (_) {}
+          } else {
+            // Single Tap -> Turbo Jump!
+            lastTapTime = now;
+            this.keys['jump'] = true;
+            this.handleJumpPress();
+            if (navigator.vibrate) try { navigator.vibrate(15); } catch (_) {}
+          }
+        }
+      }
+
+      this.keys['jump'] = false;
+      this.keys['duck'] = false;
+      this.handleDuckRelease();
+    });
+
+    this.canvas.addEventListener('pointercancel', () => {
       this.keys['jump'] = false;
       this.keys['duck'] = false;
       this.handleDuckRelease();
@@ -427,7 +511,8 @@ class VeeramaniGame {
       if (hEl) hEl.classList.remove('lost');
     }
 
-    this.player.y = this.GROUND_Y - this.player.height;
+    this.player.baseY = this.GROUND_Y - this.player.height;
+    this.player.y = this.player.baseY;
     this.player.velocityY = 0;
     this.player.isGrounded = true;
     this.player.isDucking = false;

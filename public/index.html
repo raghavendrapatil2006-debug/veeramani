@@ -1273,44 +1273,41 @@ body::before {
 /* ================= ERGONOMIC ARCADE TOUCH PEDALS ================= */
 .touch-pedals {
   display: none;
-  position: absolute;
-  bottom: 12px;
-  left: 12px;
-  right: 12px;
+  width: 100%;
   justify-content: space-between;
-  align-items: flex-end;
-  pointer-events: none;
+  align-items: center;
   z-index: 15;
 }
 
 .arcade-pedal {
-  pointer-events: auto;
   position: relative;
-  min-width: 130px;
-  height: 62px;
+  min-width: 120px;
+  height: 60px;
   border-radius: 14px;
   cursor: pointer;
   user-select: none;
   -webkit-user-select: none;
   touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
   overflow: hidden;
   border: 2px solid rgba(255, 255, 255, 0.3);
   transition: transform 0.08s ease, filter 0.08s ease, box-shadow 0.08s ease;
 }
 
-.arcade-pedal:active {
-  transform: translateY(4px) scale(0.96);
-  filter: brightness(1.3);
+.arcade-pedal:active, .arcade-pedal.active {
+  transform: translateY(3px) scale(0.96);
+  filter: brightness(1.35);
+  box-shadow: 0 0 20px currentColor;
 }
 
 .pedal-slide {
-  background: linear-gradient(135deg, rgba(255, 145, 0, 0.4) 0%, rgba(20, 14, 25, 0.92) 100%);
+  background: linear-gradient(135deg, rgba(255, 145, 0, 0.45) 0%, rgba(20, 14, 25, 0.95) 100%);
   border-color: #ff9100;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6), 0 0 16px rgba(255, 145, 0, 0.4);
 }
 
 .pedal-jump {
-  background: linear-gradient(135deg, rgba(0, 229, 255, 0.4) 0%, rgba(10, 20, 35, 0.92) 100%);
+  background: linear-gradient(135deg, rgba(0, 229, 255, 0.45) 0%, rgba(10, 20, 35, 0.95) 100%);
   border-color: #00e5ff;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6), 0 0 16px rgba(0, 229, 255, 0.4);
 }
@@ -1334,7 +1331,7 @@ body::before {
 }
 
 .pedal-icon {
-  font-size: 15px;
+  font-size: 16px;
   line-height: 1;
 }
 
@@ -1344,7 +1341,7 @@ body::before {
 
 /* Middle Pedal: Horn with Cooldown */
 .pedal-horn {
-  background: linear-gradient(135deg, rgba(230, 81, 0, 0.45) 0%, rgba(35, 15, 10, 0.92) 100%);
+  background: linear-gradient(135deg, rgba(230, 81, 0, 0.45) 0%, rgba(35, 15, 10, 0.95) 100%);
   border-color: #ff9800;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6), 0 0 16px rgba(255, 152, 0, 0.4);
 }
@@ -1368,9 +1365,9 @@ body::before {
 
 .pedal-main {
   font-family: var(--font-heading);
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 900;
-  letter-spacing: 1px;
+  letter-spacing: 0.8px;
   color: #fff;
   line-height: 1.1;
 }
@@ -1382,37 +1379,16 @@ body::before {
   letter-spacing: 0.5px;
 }
 
+.mobile-hint {
+  display: none;
+}
+.desktop-hint {
+  display: inline;
+}
+
 /* Fallback touch-controls */
 .touch-controls {
   display: none;
-}
-
-/* Show touch pedals on touch / mobile screens and narrow viewports */
-@media (hover: none) and (pointer: coarse) {
-  .touch-pedals {
-    display: flex;
-  }
-}
-
-@media (max-width: 768px) {
-  .touch-pedals {
-    display: flex;
-  }
-  .arcade-pedal {
-    min-width: 105px;
-    height: 54px;
-  }
-  .hud-pod-radar {
-    min-width: 130px;
-    padding: 4px 8px;
-  }
-  .threat-meter-track {
-    width: 60px;
-  }
-  .radar-scope-wrap {
-    width: 36px;
-    height: 36px;
-  }
 }
 
 /* ================= CONTENT SECTIONS & GUIDE ================= */
@@ -1537,21 +1513,477 @@ body::before {
   text-decoration: none;
 }
 
-/* ================= RESPONSIVE ADJUSTMENTS ================= */
+/* ================= MOBILE & TABLET RESPONSIVE SYSTEM ================= */
+
+/* 1. Touch / Coarse Pointer Devices */
+@media (hover: none) and (pointer: coarse) {
+  .touch-pedals {
+    display: flex !important;
+  }
+  .mobile-hint {
+    display: inline !important;
+  }
+  .desktop-hint {
+    display: none !important;
+  }
+}
+
+/* 2. Narrow Screens (<= 768px): Modern Mobile Viewport */
 @media (max-width: 768px) {
+  body {
+    overflow-x: hidden;
+  }
+
+  /* Compact Topbar Header */
+  .topbar {
+    padding: 6px 10px;
+    height: 48px;
+  }
+  .topbar-inner {
+    padding: 0;
+  }
+  .brand {
+    gap: 8px;
+  }
+  .brand-avatar {
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+  }
+  .brand-text {
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+  }
+  .brand-title {
+    font-size: 15px;
+    white-space: nowrap;
+    letter-spacing: 0.5px;
+  }
+  .brand-sub {
+    display: none !important;
+  }
+  .topbar-actions {
+    gap: 5px;
+  }
+  .btn-icon {
+    width: 34px;
+    height: 34px;
+    font-size: 15px;
+  }
+
+  /* Compact Hero Header */
+  .main-content {
+    padding: 4px 6px 24px;
+    max-width: 100%;
+  }
+  .hero-header {
+    margin-bottom: 6px;
+    padding: 0 4px;
+  }
+  .hero-tag {
+    font-size: 10px;
+    padding: 2px 8px;
+    margin-bottom: 3px;
+  }
+  .hero-title {
+    font-size: 20px;
+    line-height: 1.1;
+  }
+  .hero-desc {
+    display: none !important;
+  }
+
+  /* Mobile Arcade Stage Wrapper */
+  .stage-wrapper {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+    border-radius: 14px;
+    border-width: 1.5px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7), 0 0 20px rgba(255, 179, 0, 0.25);
+  }
+
+  /* Taller, immersive 16:9 canvas on mobile portrait */
+  .canvas-container {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: 13px 13px 0 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Dedicated Arcade Control Deck below canvas */
+  .touch-pedals {
+    display: flex !important;
+    position: static !important;
+    width: 100%;
+    background: linear-gradient(180deg, #131929 0%, #0a0d16 100%);
+    border-top: 1.5px solid rgba(255, 179, 0, 0.35);
+    padding: 8px 8px 10px;
+    gap: 8px;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 0 0 13px 13px;
+    box-shadow: 0 -4px 18px rgba(0, 0, 0, 0.5);
+    z-index: 10;
+    pointer-events: auto;
+  }
+
+  .arcade-pedal {
+    flex: 1;
+    min-width: 0;
+    height: 58px;
+    border-radius: 12px;
+    border-width: 1.5px;
+    pointer-events: auto;
+  }
+
+  .arcade-pedal:active {
+    transform: translateY(2px) scale(0.96);
+    filter: brightness(1.3);
+  }
+
+  .pedal-content {
+    padding: 2px 4px;
+    gap: 1px;
+  }
+  .pedal-icon {
+    font-size: 16px;
+    line-height: 1;
+  }
+  .pedal-main {
+    font-size: 13px;
+    letter-spacing: 0.5px;
+    font-weight: 900;
+  }
+  .pedal-sub {
+    font-size: 8px;
+    letter-spacing: 0.2px;
+    opacity: 0.8;
+  }
+
+  /* Mobile Cockpit HUD */
+  .hud-cockpit {
+    top: 4px;
+    left: 4px;
+    right: 4px;
+    gap: 4px;
+  }
+  .hud-pod {
+    padding: 2px 5px;
+    border-radius: 7px;
+    border-width: 1px;
+    gap: 4px;
+  }
+
+  /* Radar Pod */
+  .hud-pod-radar {
+    min-width: 0;
+    flex: 1;
+    padding: 2px 4px;
+  }
+  .radar-scope-wrap {
+    width: 24px;
+    height: 24px;
+    border-width: 1px;
+  }
+  .radar-sweep-line {
+    width: 12px;
+    height: 12px;
+  }
+  .radar-title {
+    font-size: 7px;
+    letter-spacing: 0.3px;
+    line-height: 1;
+  }
+  .radar-gap {
+    font-size: 10px;
+    line-height: 1.1;
+  }
+  .threat-meter-track {
+    width: 40px;
+    height: 4px;
+  }
+
+  /* Center Pod */
+  .hud-pod-center {
+    min-width: 0;
+    flex: 1.15;
+    padding: 2px 4px;
+    gap: 1px;
+  }
+  .hud-hearts {
+    gap: 2px;
+  }
+  .heart-icon {
+    font-size: 11px;
+  }
+  .telemetry-speed-row {
+    gap: 3px;
+  }
+  .speed-num {
+    font-size: 10.5px;
+  }
+  .speed-unit {
+    font-size: 6.5px;
+  }
+  .zone-badge {
+    font-size: 7.5px;
+    padding: 1px 4px;
+  }
+  .telemetry-dist-row {
+    display: none !important;
+  }
+
+  /* Vault Pod */
+  .hud-pod-vault {
+    min-width: 0;
+    flex: 1.1;
+    padding: 2px 4px;
+    gap: 1px;
+  }
+  .vault-label {
+    font-size: 7px;
+    letter-spacing: 0.3px;
+  }
+  .vault-val {
+    font-size: 11px;
+  }
+  .vault-subrow {
+    gap: 4px;
+  }
+  .vault-sweet, .vault-coins {
+    font-size: 8.5px;
+  }
+  .hud-btn-control {
+    padding: 1px 4px;
+    font-size: 8.5px;
+    border-radius: 4px;
+  }
+  .telemetry-time {
+    display: none !important;
+  }
+
+  /* Situational Banner & Power-up Bar */
+  .situational-banner {
+    top: 38px;
+    padding: 2px 8px;
+    font-size: 9.5px;
+    gap: 4px;
+    max-width: 92%;
+  }
+
+  .hud-powerup-bar {
+    top: 38px;
+    gap: 4px;
+  }
+  .pu-badge {
+    padding: 2px 6px;
+    font-size: 8.5px;
+    gap: 3px;
+  }
+
+  /* Overlay UI Adjustments */
+  .game-overlay {
+    padding: 6px 8px;
+  }
+  .start-box {
+    gap: 6px;
+    max-width: 100%;
+  }
+  .character-badge {
+    padding: 3px 10px;
+    font-size: 11.5px;
+    gap: 6px;
+  }
+  .character-badge img {
+    width: 28px;
+    height: 28px;
+  }
+  .character-badge span {
+    font-size: 11.5px;
+  }
+  .mode-label {
+    font-size: 9.5px;
+    margin-bottom: 2px;
+  }
   .mode-tabs {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 4px;
   }
-  .score-grid {
-    grid-template-columns: repeat(2, 1fr);
+  .mode-btn {
+    padding: 4px;
+    font-size: 10.5px;
   }
-  .hud-pill {
-    padding: 4px 10px;
-    font-size: 12px;
+  .mode-btn .mode-icon {
+    font-size: 14px;
+  }
+  .mode-btn .mode-desc {
+    font-size: 7.5px;
+  }
+  .speed-tabs {
+    gap: 4px;
+  }
+  .speed-btn {
+    padding: 3px 8px;
+    font-size: 10px;
   }
   .btn-primary-big {
-    font-size: 20px;
-    padding: 12px 32px;
+    font-size: 15px !important;
+    padding: 9px 18px !important;
+    width: 100%;
+    max-width: 280px;
+  }
+  .control-hints {
+    font-size: 9.5px !important;
+    margin-top: 2px !important;
+  }
+  .desktop-hint {
+    display: none !important;
+  }
+  .mobile-hint {
+    display: inline !important;
+  }
+
+  /* Game Over Card */
+  .over-card {
+    padding: 6px 8px;
+    gap: 5px;
+    max-width: 100%;
+  }
+  .over-title {
+    font-size: 16px;
+    margin: 2px 0;
+  }
+  .restart-hint-pill {
+    font-size: 9px;
+    padding: 2px 8px;
+  }
+  .score-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 4px;
+    margin: 3px 0;
+  }
+  .score-item {
+    padding: 4px 6px;
+  }
+  .score-item .label {
+    font-size: 8px;
+  }
+  .score-item .val {
+    font-size: 13px;
+  }
+  .dialogue-card {
+    padding: 4px 8px;
+    margin: 2px 0;
+  }
+  .dialogue-ta {
+    font-size: 10.5px;
+  }
+  .dialogue-en {
+    font-size: 9px;
+  }
+  #cod-bill-receipt {
+    font-size: 9px !important;
+    padding: 3px 6px !important;
+  }
+
+  /* Content Cards & Footer on Mobile */
+  .game-info-section {
+    margin-top: 24px;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .info-card {
+    padding: 16px;
+  }
+  .footer {
+    margin-top: 30px;
+    padding: 20px 10px;
+    font-size: 11px;
+  }
+}
+
+/* 3. Small Mobile Screens (<= 360px) */
+@media (max-width: 360px) {
+  .pedal-main {
+    font-size: 11px;
+  }
+  .pedal-sub {
+    display: none;
+  }
+  .arcade-pedal {
+    height: 50px;
+  }
+  .hud-pod {
+    padding: 2px 3px;
+  }
+  .radar-title {
+    display: none;
+  }
+  .vault-label {
+    display: none;
+  }
+}
+
+/* 4. Mobile Landscape Immersive Mode */
+@media (max-width: 920px) and (orientation: landscape) {
+  .topbar {
+    display: none !important;
+  }
+  .hero-header {
+    display: none !important;
+  }
+  .main-content {
+    padding: 0 !important;
+    max-width: 100vw !important;
+  }
+  .stage-wrapper {
+    width: 100vw !important;
+    height: 100vh !important;
+    max-width: 100vw !important;
+    border: none !important;
+    border-radius: 0 !important;
+    position: relative !important;
+  }
+  .canvas-container {
+    width: 100% !important;
+    height: 100% !important;
+    aspect-ratio: auto !important;
+    border-radius: 0 !important;
+  }
+  .touch-pedals {
+    display: flex !important;
+    position: absolute !important;
+    bottom: 8px !important;
+    left: 12px !important;
+    right: 12px !important;
+    background: transparent !important;
+    border-top: none !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    pointer-events: none !important;
+    z-index: 25 !important;
+    border-radius: 0 !important;
+  }
+  .arcade-pedal {
+    pointer-events: auto !important;
+    background: rgba(10, 14, 26, 0.65) !important;
+    backdrop-filter: blur(6px) !important;
+    -webkit-backdrop-filter: blur(6px) !important;
+    height: 52px !important;
+    max-width: 140px !important;
+    border-radius: 12px !important;
+  }
+  .footer {
+    display: none !important;
+  }
+  .game-info-section {
+    display: none !important;
   }
 }
 
@@ -1684,38 +2116,6 @@ body::before {
           <span id="sit-text">EMERGENCY CHASE! SWIGGY WITHIN 5 METERS!</span>
         </div>
 
-        <!-- Ergonomic Arcade Touch Pedals (Slide, Horn Scatter with Cooldown, Jump) -->
-        <div class="touch-pedals" id="touch-pedals">
-          <button class="arcade-pedal pedal-slide" id="btn-duck" type="button" aria-label="Slide and Duck">
-            <div class="pedal-top-glow"></div>
-            <div class="pedal-content">
-              <span class="pedal-icon">▼</span>
-              <span class="pedal-main">SLIDE</span>
-              <span class="pedal-sub">DUCK [S / ↓]</span>
-            </div>
-          </button>
-
-          <!-- Dedicated Horn Scatter Button with Cooldown -->
-          <button class="arcade-pedal pedal-horn" id="btn-horn" type="button" aria-label="Horn Scatter Obstacles">
-            <div class="pedal-top-glow"></div>
-            <div class="horn-cooldown-overlay" id="horn-cooldown-overlay"></div>
-            <div class="pedal-content">
-              <span class="pedal-icon">📢</span>
-              <span class="pedal-main">HORN</span>
-              <span class="pedal-sub" id="horn-status-text">SCATTER [H]</span>
-            </div>
-          </button>
-
-          <button class="arcade-pedal pedal-jump" id="btn-jump" type="button" aria-label="Turbo Jump">
-            <div class="pedal-top-glow"></div>
-            <div class="pedal-content">
-              <span class="pedal-icon">▲</span>
-              <span class="pedal-main">TURBO JUMP</span>
-              <span class="pedal-sub">LEAP [W / ↑ / SPACE]</span>
-            </div>
-          </button>
-        </div>
-
         <!-- ================= START SCREEN OVERLAY ================= -->
         <div class="game-overlay" id="start-overlay">
           <div class="start-box">
@@ -1795,15 +2195,8 @@ body::before {
             </button>
 
             <div class="control-hints">
-              <span><kbd>Space</kbd> / <kbd>↑</kbd> to Jump</span>
-              <span>·</span>
-              <span><kbd>↓</kbd> / <kbd>S</kbd> to Duck &amp; Slide</span>
-              <span>·</span>
-              <span><kbd>H</kbd> to Horn (Scatter)</span>
-              <span>·</span>
-              <span><kbd>→</kbd> / <kbd>D</kbd> to Sprint</span>
-              <span>·</span>
-              <span>❤️ 3 Hearts</span>
+              <span class="desktop-hint"><kbd>Space</kbd> / <kbd>↑</kbd> to Jump · <kbd>↓</kbd> / <kbd>S</kbd> to Duck · <kbd>H</kbd> to Horn · ❤️ 3 Hearts</span>
+              <span class="mobile-hint">📱 Tap Arcade Pedals Below or Swipe Up/Down! · ❤️ 3 Hearts</span>
             </div>
           </div>
         </div>
@@ -1897,6 +2290,39 @@ body::before {
         </div>
 
       </div>
+
+      <!-- Dedicated Ergonomic Mobile Arcade Touch Pedals (Slide, Horn Scatter with Cooldown, Jump) -->
+      <div class="touch-pedals" id="touch-pedals">
+        <button class="arcade-pedal pedal-slide" id="btn-duck" type="button" aria-label="Slide and Duck">
+          <div class="pedal-top-glow"></div>
+          <div class="pedal-content">
+            <span class="pedal-icon">▼</span>
+            <span class="pedal-main">SLIDE</span>
+            <span class="pedal-sub">DUCK</span>
+          </div>
+        </button>
+
+        <!-- Dedicated Horn Scatter Button with Cooldown -->
+        <button class="arcade-pedal pedal-horn" id="btn-horn" type="button" aria-label="Horn Scatter Obstacles">
+          <div class="pedal-top-glow"></div>
+          <div class="horn-cooldown-overlay" id="horn-cooldown-overlay"></div>
+          <div class="pedal-content">
+            <span class="pedal-icon">📢</span>
+            <span class="pedal-main">HORN</span>
+            <span class="pedal-sub" id="horn-status-text">SCATTER [H]</span>
+          </div>
+        </button>
+
+        <button class="arcade-pedal pedal-jump" id="btn-jump" type="button" aria-label="Turbo Jump">
+          <div class="pedal-top-glow"></div>
+          <div class="pedal-content">
+            <span class="pedal-icon">▲</span>
+            <span class="pedal-main">TURBO JUMP</span>
+            <span class="pedal-sub">LEAP</span>
+          </div>
+        </button>
+      </div>
+
     </div>
 
     <!-- ================= FLOATING STICKY RESTART BAR (ALWAYS VISIBLE VIEWPORT BANNER ON GAME OVER) ================= -->

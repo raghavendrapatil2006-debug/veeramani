@@ -37,7 +37,9 @@ if (faceBase64) {
 }
 
 // Inline style.css into index.html so page is 100% styled from byte 1
-if (!html.includes('/* INLINED_STYLE */')) {
+if (html.includes('<style id="inlined-game-styles">')) {
+  html = html.replace(/<style id="inlined-game-styles">[\s\S]*?<\/style>/, `<style id="inlined-game-styles">/* INLINED_STYLE */\n${css}\n</style>`);
+} else {
   html = html.replace('</head>', `<style id="inlined-game-styles">/* INLINED_STYLE */\n${css}\n</style>\n</head>`);
 }
 
