@@ -4,7 +4,7 @@
   "description": "Veeramani Auto Rush Endless Runner Game",
   "scripts": {
     "start": "node server.js",
-    "build": "echo 'Static build ready'"
+    "build": "node build.js"
   },
   "keywords": [
     "game",
