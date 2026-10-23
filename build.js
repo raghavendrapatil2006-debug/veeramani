@@ -36,7 +36,7 @@ if (faceBase64) {
   html = html.replace(/src="assets\/images\/veeramani-face\.png"/g, `src="${faceBase64}"`);
 }
 
-// Inline style.css into index.html so page is 100% styled from byte 1
+// Replace or insert style in html cleanly every build
 if (html.includes('<style id="inlined-game-styles">')) {
   html = html.replace(/<style id="inlined-game-styles">[\s\S]*?<\/style>/, `<style id="inlined-game-styles">/* INLINED_STYLE */\n${css}\n</style>`);
 } else {
@@ -50,7 +50,7 @@ fs.copyFileSync(path.join(__dirname, 'game.js'), path.join(publicDir, 'game.js')
 fs.copyFileSync(path.join(__dirname, 'audio.js'), path.join(publicDir, 'audio.js'));
 copyFolderSync(path.join(__dirname, 'assets'), path.join(publicDir, 'assets'));
 
-// 4. Also update root index.html so both root and public are fully styled
+// 4. Also update root index.html so both root and public are fully styled with latest CSS
 fs.writeFileSync(path.join(__dirname, 'index.html'), html);
 
-console.log('✅ Build complete! Assets generated in public/ and root index.html updated with inline styles.');
+console.log('✅ Build complete! Assets generated in public/ and root index.html updated with latest CSS.');
