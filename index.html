@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Veeramani Run: Swiggy Chase – Dodge Falling Appliances &amp; Escape COD Orders!</title>
+  <meta name="description" content="Help Veeramani escape chasing Swiggy delivery boys and dodge falling 1.69L TVs, fridges, and washing machines! Features the viral 'Veeramani Era' meme voice!">
+  <meta name="theme-color" content="#fc8019">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Veeramani Run: Swiggy Chase &amp; Falling Parcels">
+  <meta property="og:description" content="'You can find someone who is hiding, but you can never find someone who is running!'">
+  <meta property="og:image" content="assets/images/og-image.jpg">
+  <meta property="og:type" content="website">
+
+  <!-- Icons -->
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon-32x32.png">
+  <link rel="apple-touch-icon" href="assets/images/veeramani-face.png">
+
+  <!-- Fonts & Styles -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="#" aria-label="Veeramani Run">
+        <img class="brand-avatar" src="assets/images/veeramani-face.png" alt="Veeramani">
+        <div class="brand-text">
+          <span class="brand-title">VEERAMANI RUN</span>
+          <span class="brand-sub">Swiggy Chase &amp; Falling Parcels Edition</span>
+        </div>
+      </a>
+
+      <div class="topbar-actions">
+        <button class="btn-icon active" id="btn-toggle-voice" title="Toggle Veeramani Voice (🗣️)" aria-label="Toggle Voice">🗣️</button>
+        <button class="btn-icon active" id="btn-toggle-sfx" title="Toggle Sound Effects (🔊)" aria-label="Toggle SFX">🔊</button>
+        <button class="btn-icon" id="btn-fullscreen" title="Full Screen (⛶)" aria-label="Full Screen">⛶</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Game Container -->
+  <main class="main-content">
+    
+    <div class="hero-header">
+      <div class="hero-tag" style="border-color: #fc8019; color: #fc8019; background: rgba(252, 128, 25, 0.12);">
+        🛵 The Swiggy COD Chase Is On!
+      </div>
+      <h1 class="hero-title">VEERAMANI <span class="glow" style="color: #fc8019;">RUN!</span></h1>
+      <p class="hero-desc">Swiggy delivery boys are chasing Veeramani! Dodge falling washing machines, fridges, and 1.69 Lakh TVs plummeting from the sky!</p>
+    </div>
+
+    <!-- Arcade Stage Container -->
+    <div class="stage-wrapper" id="stage-wrapper" style="border-color: rgba(252, 128, 25, 0.6); box-shadow: 0 15px 40px rgba(0,0,0,0.8), 0 0 35px rgba(252, 128, 25, 0.35);">
+      <div class="canvas-container" id="canvas-container">
+        <canvas id="game-canvas"></canvas>
+
+        <!-- ================= CYBER-MADURAI ARCADE COCKPIT HUD ================= -->
+        <div class="hud-cockpit" id="hud-cockpit">
+          <!-- Left Pod: Swiggy Threat Radar & Proximity -->
+          <div class="hud-pod hud-pod-radar" id="hud-radar-pod">
+            <div class="radar-scope-wrap">
+              <div class="radar-crosshair-h"></div>
+              <div class="radar-crosshair-v"></div>
+              <div class="radar-sweep-line"></div>
+              <div class="radar-blip swiggy" id="radar-blip-swiggy" title="Swiggy Delivery Scooter"></div>
+              <div class="radar-blip player" title="Veeramani"></div>
+            </div>
+            <div class="radar-telemetry">
+              <div class="radar-title">SWIGGY PROXIMITY</div>
+              <div class="radar-gap" id="hud-chase-gap">🛵 22.0m GAP</div>
+              <div class="threat-meter-track" title="Threat Meter">
+                <div class="threat-meter-fill" id="hud-threat-fill"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Center Pod: Highway Telemetry, 3 Hearts & Zone Tracker -->
+          <div class="hud-pod hud-pod-center">
+            <!-- 3 Hearts Life System -->
+            <div class="hud-hearts" id="hud-hearts" title="3 Lives Remaining">
+              <span class="heart-icon active" id="heart-1">❤️</span>
+              <span class="heart-icon active" id="heart-2">❤️</span>
+              <span class="heart-icon active" id="heart-3">❤️</span>
+            </div>
+
+            <!-- Speed & Zone -->
+            <div class="telemetry-speed-row">
+              <div class="telemetry-speed">
+                <span class="speed-num" id="hud-speed">24.0</span>
+                <span class="speed-unit">KM/H</span>
+              </div>
+              <div class="zone-badge" id="hud-zone-badge" title="Dynamic Environment Zone (every 500m)">
+                <span id="zone-icon">☀️</span>
+                <span id="zone-title">ZONE 1: DAY</span>
+              </div>
+            </div>
+
+            <div class="telemetry-dist-row">
+              <span class="dist-tag">NH-44</span>
+              <span class="dist-val" id="hud-distance">0m</span>
+              <span class="dist-best" id="hud-best">🏆 0m</span>
+            </div>
+          </div>
+
+          <!-- Right Pod: COD Vault, Sweets & Coins -->
+          <div class="hud-pod hud-pod-vault">
+            <div class="vault-row">
+              <span class="vault-label">COD SAVED</span>
+              <span class="vault-val" id="hud-cod-saved">₹0</span>
+            </div>
+            <div class="vault-subrow">
+              <span class="vault-sweet" id="hud-sweets" title="Sweet Boxes Collected">🍬 0</span>
+              <span class="vault-coins" id="hud-coins" title="Coins Collected">🪙 0</span>
+              <button class="hud-btn-control" id="btn-pause-toggle" type="button" title="Pause Game">⏸</button>
+            </div>
+            <div class="telemetry-time" id="hud-time-pill">
+              <span id="hud-time">⏳ 00:00.00</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Active Power-ups Bar (Magnet, Shield, Slow-Mo) -->
+        <div class="hud-powerup-bar" id="hud-powerup-bar">
+          <div class="pu-badge pu-shield hidden" id="pu-shield" title="Shield active: absorbs 1 hit">
+            <span class="pu-icon">🛡️</span>
+            <span class="pu-label">SHIELD</span>
+            <span class="pu-timer" id="pu-shield-val">8s</span>
+          </div>
+          <div class="pu-badge pu-magnet hidden" id="pu-magnet" title="Magnet active: pulls coins & sweets">
+            <span class="pu-icon">🧲</span>
+            <span class="pu-label">MAGNET</span>
+            <span class="pu-timer" id="pu-magnet-val">6s</span>
+          </div>
+          <div class="pu-badge pu-slowmo hidden" id="pu-slowmo" title="Slow-Mo active: matrices speed">
+            <span class="pu-icon">⏱️</span>
+            <span class="pu-label">SLOW-MO</span>
+            <span class="pu-timer" id="pu-slowmo-val">5s</span>
+          </div>
+        </div>
+
+        <!-- Dynamic Situational Alert Banner -->
+        <div id="situational-banner" class="situational-banner hidden">
+          <span id="sit-icon">🚨</span>
+          <span id="sit-text">EMERGENCY CHASE! SWIGGY WITHIN 5 METERS!</span>
+        </div>
+
+        <!-- Ergonomic Arcade Touch Pedals (Slide, Horn Scatter with Cooldown, Jump) -->
+        <div class="touch-pedals" id="touch-pedals">
+          <button class="arcade-pedal pedal-slide" id="btn-duck" type="button" aria-label="Slide and Duck">
+            <div class="pedal-top-glow"></div>
+            <div class="pedal-content">
+              <span class="pedal-icon">▼</span>
+              <span class="pedal-main">SLIDE</span>
+              <span class="pedal-sub">DUCK [S / ↓]</span>
+            </div>
+          </button>
+
+          <!-- Dedicated Horn Scatter Button with Cooldown -->
+          <button class="arcade-pedal pedal-horn" id="btn-horn" type="button" aria-label="Horn Scatter Obstacles">
+            <div class="pedal-top-glow"></div>
+            <div class="horn-cooldown-overlay" id="horn-cooldown-overlay"></div>
+            <div class="pedal-content">
+              <span class="pedal-icon">📢</span>
+              <span class="pedal-main">HORN</span>
+              <span class="pedal-sub" id="horn-status-text">SCATTER [H]</span>
+            </div>
+          </button>
+
+          <button class="arcade-pedal pedal-jump" id="btn-jump" type="button" aria-label="Turbo Jump">
+            <div class="pedal-top-glow"></div>
+            <div class="pedal-content">
+              <span class="pedal-icon">▲</span>
+              <span class="pedal-main">TURBO JUMP</span>
+              <span class="pedal-sub">LEAP [W / ↑ / SPACE]</span>
+            </div>
+          </button>
+        </div>
+
+        <!-- ================= START SCREEN OVERLAY ================= -->
+        <div class="game-overlay" id="start-overlay">
+          <div class="start-box">
+            
+            <!-- VIRAL MEME BANNER -->
+            <div class="character-badge" style="background: rgba(252, 128, 25, 0.15); border-color: #fc8019;">
+              <img src="assets/images/veeramani-face.png" alt="Veeramani">
+              <div style="text-align: left;">
+                <div style="font-weight: 800; color: #ffd600; font-size: 14px;">"THE VEERAMANI ERA"</div>
+                <div style="font-size: 12px; color: #fff;">"You can find someone who's hiding, but you can never find someone who's running!"</div>
+                <div id="reel-badge" style="display: inline-flex; align-items: center; gap: 5px; font-size: 11px; color: #00e676; margin-top: 4px; font-weight: 700;">
+                  <span>🔥</span> <span>Original Instagram Reel Audio Active</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Big Meme Voice & BGM Buttons -->
+            <div style="display: flex; gap: 8px; width: 100%; justify-content: center; flex-wrap: wrap;">
+              <button class="btn-primary-big" id="btn-play-meme" type="button" style="background: linear-gradient(135deg, #fc8019 0%, #d84315 100%); font-size: 14px; padding: 10px 18px; flex: 1 1 auto;">
+                <span id="btn-play-meme-icon">🗣️</span>
+                <span id="btn-play-meme-text">PLAY VEERAMANI REEL AUDIO</span>
+              </button>
+              <button class="btn-secondary" id="btn-toggle-bgm" type="button" style="font-size: 13px; padding: 10px 14px; border: 1px solid #fc8019; background: rgba(252, 128, 25, 0.15); color: #fff; cursor: pointer; border-radius: 8px; font-weight: 700; display: flex; align-items: center; gap: 6px;">
+                <span id="bgm-icon">🎵</span>
+                <span id="bgm-text">Reel BGM: OFF</span>
+              </button>
+            </div>
+
+            <!-- Custom Audio File Importer -->
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 6px; width: 100%;">
+              <input type="file" id="audio-file-input" accept="audio/*" style="display: none;">
+              <button class="btn-secondary" id="btn-upload-audio" type="button" style="font-size: 12px; padding: 5px 14px; opacity: 0.85;" title="Select another Veeramani MP3/WAV file from your computer">
+                <span>📁</span>
+                <span>Import Another Custom Audio</span>
+              </button>
+              <div id="audio-status-msg" style="font-size: 12px; color: #00e676; display: none;"></div>
+            </div>
+
+            <!-- Game Mode Selector -->
+            <div class="mode-selector-wrap">
+              <div class="mode-label">Select Game Mode</div>
+              <div class="mode-tabs">
+                <button class="mode-btn active" data-mode="endless">
+                  <span>🏃</span>
+                  <span>Endless Chase</span>
+                </button>
+                <button class="mode-btn" data-mode="time_attack">
+                  <span>⏱️</span>
+                  <span>60s Survival</span>
+                </button>
+                <button class="mode-btn" data-mode="cod_rush">
+                  <span>⚡</span>
+                  <span>Parcel Frenzy</span>
+                </button>
+                <button class="mode-btn" data-mode="chill">
+                  <span>🌴</span>
+                  <span>Chill Practice</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Game Time & Speed Pacing -->
+            <div class="mode-selector-wrap">
+              <div class="mode-label">Game Time &amp; Speed Pacing</div>
+              <div class="speed-tabs">
+                <button class="speed-btn" data-pace="0.8">Chill 0.8x</button>
+                <button class="speed-btn active" data-pace="1.0">Normal 1.0x</button>
+                <button class="speed-btn" data-pace="1.25">Fast 1.25x</button>
+                <button class="speed-btn" data-pace="1.5">Turbo 1.5x</button>
+              </div>
+            </div>
+
+            <!-- Start Button -->
+            <button class="btn-primary-big" id="btn-start" type="button">
+              <span>▶</span>
+              <span>START ESCAPE RUN!</span>
+            </button>
+
+            <div class="control-hints">
+              <span><kbd>Space</kbd> / <kbd>↑</kbd> to Jump</span>
+              <span>·</span>
+              <span><kbd>↓</kbd> / <kbd>S</kbd> to Duck &amp; Slide</span>
+              <span>·</span>
+              <span><kbd>H</kbd> to Horn (Scatter)</span>
+              <span>·</span>
+              <span><kbd>→</kbd> / <kbd>D</kbd> to Sprint</span>
+              <span>·</span>
+              <span>❤️ 3 Hearts</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================= GAME OVER OVERLAY ================= -->
+        <div class="game-overlay hidden" id="over-overlay">
+          <div class="over-card">
+            <!-- 1. BIG HERO RESTART BUTTON AT THE VERY TOP (IMPOSSIBLE TO MISS) -->
+            <div class="over-actions" style="margin: 0; width: 100%; display: flex; justify-content: center;">
+              <button class="btn-primary-big btn-restart-hero" id="btn-restart" type="button" style="width: 100%; max-width: 440px;">
+                <span class="restart-spin-icon">🔄</span>
+                <span>RESTART ESCAPE RUN</span>
+              </button>
+            </div>
+            <div class="restart-hint-pill">
+              ⌨️ Tap [Space], [Enter], or Click Anywhere to Restart!
+            </div>
+
+            <h2 class="over-title" id="over-title">SWIGGY CAUGHT VEERAMANI!</h2>
+            <div class="badge-new-record" id="new-best-badge" style="display: none;">★ NEW PERSONAL BEST!</div>
+
+            <!-- Detailed Score Breakdown -->
+            <div class="score-grid">
+              <div class="score-item">
+                <span class="label">Distance</span>
+                <span class="val gold" id="final-score">0m</span>
+              </div>
+              <div class="score-item">
+                <span class="label">Best Record</span>
+                <span class="val" id="final-best">0m</span>
+              </div>
+              <div class="score-item">
+                <span class="label">Zone Reached</span>
+                <span class="val cyan" id="final-zone">☀️ Zone 1</span>
+              </div>
+              <div class="score-item">
+                <span class="label">Sweets / Coins</span>
+                <span class="val" id="final-sweets-coins"><span id="final-sweets">0</span> 🍬 / <span id="final-coins">0</span> 🪙</span>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 8px; justify-content: center; width: 100%;">
+              <button class="btn-secondary" id="btn-share" type="button">
+                <span>📢</span>
+                <span>Share Score</span>
+              </button>
+              <button class="btn-secondary" id="btn-menu" type="button">
+                <span>⚙️</span>
+                <span>Change Mode</span>
+              </button>
+            </div>
+
+            <!-- Veeramani Meme Dialogue Card -->
+            <div class="dialogue-card">
+              <div class="dialogue-ta" id="over-quote-ta">"அய்யய்யோ... ஆல் கேம் ஓவர்! என்கிட்ட காசு இல்ல பா!"</div>
+              <div class="dialogue-en" id="over-quote-en">— All game over,,,, Please cancel the Cash-on-Delivery orders!</div>
+            </div>
+
+            <!-- Situational Unpaid COD Debt Receipt (Collapsible Dropdown) -->
+            <details id="cod-bill-receipt" style="background: rgba(10,13,22,0.85); border: 1px dashed rgba(255,23,68,0.5); border-radius: 8px; padding: 6px 12px; margin: 2px 0; text-align: left; font-size: 11px; font-family: monospace; width: 100%; cursor: pointer;">
+              <summary style="color: #ff5252; font-weight: 800; display: flex; justify-content: space-between;">
+                <span>📦 VIEW SWIGGY COD INVOICE</span>
+                <span id="final-cod-total" style="color: #ffd600;">₹2,79,000 ▼</span>
+              </summary>
+              <div style="display: flex; justify-content: space-between; color: #ccc; margin-top: 5px;">
+                <span>1.69L Smart OLED TV</span>
+                <span>₹1,69,000</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; color: #ccc;">
+                <span>Double-Door Refrigerator</span>
+                <span>₹68,000</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; color: #ccc;">
+                <span>Front Load Washing Machine</span>
+                <span>₹42,000</span>
+              </div>
+            </details>
+          </div>
+        </div>
+
+        <!-- ================= PAUSE OVERLAY ================= -->
+        <div class="game-overlay hidden" id="pause-overlay">
+          <div class="over-card" style="border-color: var(--accent-cyan); box-shadow: var(--shadow-cyan);">
+            <h2 class="over-title" style="color: var(--accent-cyan);">GAME PAUSED</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 12px;">Swiggy delivery agent is waiting! Catch your breath.</p>
+            <button class="btn-primary-big" id="btn-resume" type="button">
+              <span>▶</span>
+              <span>RESUME</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ================= FLOATING STICKY RESTART BAR (ALWAYS VISIBLE VIEWPORT BANNER ON GAME OVER) ================= -->
+    <div class="sticky-restart-bar hidden" id="sticky-restart-bar">
+      <button class="sticky-restart-btn" id="btn-sticky-restart" type="button">
+        <span class="restart-spin-icon">🔄</span>
+        <span>RESTART ESCAPE RUN (PRESS SPACE / CLICK HERE)</span>
+      </button>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>Veeramani Run: Swiggy Chase Edition is a fan tribute inspired by @veeramani_121 and the viral COD delivery memes.</p>
+    <p style="margin-top: 6px;">Built with HTML5 Canvas, Web Audio API &amp; Web Speech Synthesis. © 2026 Veeramani Run.</p>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="audio.js"></script>
+  <script src="game.js"></script>
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      const game = new VeeramaniGame('game-canvas');
+      window.currentGame = game;
+
+      // Mode Selector buttons
+      document.querySelectorAll('.mode-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          const mode = btn.getAttribute('data-mode');
+          game.setMode(mode);
+        });
+      });
+
+      // Speed Pacing buttons
+      document.querySelectorAll('.speed-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.speed-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          const pace = parseFloat(btn.getAttribute('data-pace'));
+          game.setPace(pace);
+        });
+      });
+
+      // Play Meme Voice Button (Toggle Play / Stop)
+      const btnPlayMeme = document.getElementById('btn-play-meme');
+      const btnPlayMemeIcon = document.getElementById('btn-play-meme-icon');
+      const btnPlayMemeText = document.getElementById('btn-play-meme-text');
+
+      const resetMemeBtn = () => {
+        if (btnPlayMemeText) btnPlayMemeText.textContent = 'PLAY VEERAMANI REEL AUDIO';
+        if (btnPlayMemeIcon) btnPlayMemeIcon.textContent = '🗣️';
+      };
+
+      if (btnPlayMeme) {
+        btnPlayMeme.addEventListener('click', () => {
+          if (window.audioEngine.isClipPlaying('meme')) {
+            window.audioEngine.stopClip('meme');
+            resetMemeBtn();
+          } else {
+            const meme = window.audioEngine.playVeeramaniEraMeme();
+            if (btnPlayMemeText) btnPlayMemeText.textContent = 'STOP REEL AUDIO';
+            if (btnPlayMemeIcon) btnPlayMemeIcon.textContent = '⏹️';
+            game.showSpeechBubble(
+              "ஒளிஞ்சிருக்கிறவன கூட கண்டுபிடிச்சிரலாம், ஆனா ஓடிக்கிட்டே இருக்கிறவன கண்டுபிடிக்க முடியாது!",
+              "You can find someone who is hiding, but you can never find someone who's running!",
+              4.5,
+              true
+            );
+            const clip = window.audioEngine.clips['meme'];
+            if (clip) {
+              clip.onended = resetMemeBtn;
+            }
+          }
+        });
+      }
+
+      // Reel Looping BGM Toggle
+      const btnToggleBgm = document.getElementById('btn-toggle-bgm');
+      const bgmIcon = document.getElementById('bgm-icon');
+      const bgmText = document.getElementById('bgm-text');
+
+      if (btnToggleBgm) {
+        btnToggleBgm.addEventListener('click', () => {
+          const active = window.audioEngine.toggleBgm();
+          if (active) {
+            btnToggleBgm.style.background = '#fc8019';
+            btnToggleBgm.style.color = '#fff';
+            if (bgmText) bgmText.textContent = 'Reel BGM: ON';
+            if (bgmIcon) bgmIcon.textContent = '🔥';
+            game.showSpeechBubble("ரீல் ஆடியோ லூப் ஆன்!", "Reel BGM loop started!", 2.0, true);
+          } else {
+            btnToggleBgm.style.background = 'rgba(252, 128, 25, 0.15)';
+            btnToggleBgm.style.color = '#fff';
+            if (bgmText) bgmText.textContent = 'Reel BGM: OFF';
+            if (bgmIcon) bgmIcon.textContent = '🎵';
+          }
+        });
+      }
+
+      // Audio Loaded status handler
+      window.addEventListener('veeramani-audio-loaded', (e) => {
+        const reelBadge = document.getElementById('reel-badge');
+        if (reelBadge && e.detail.key === 'meme') {
+          reelBadge.innerHTML = '<span>🔥</span> <span>Original Instagram Reel Audio Active</span>';
+        }
+      });
+
+
+
+      // Custom Audio Upload Button
+      const fileInput = document.getElementById('audio-file-input');
+      const uploadBtn = document.getElementById('btn-upload-audio');
+      const statusMsg = document.getElementById('audio-status-msg');
+
+      if (uploadBtn && fileInput) {
+        uploadBtn.addEventListener('click', () => {
+          fileInput.click();
+        });
+
+        fileInput.addEventListener('change', (e) => {
+          const file = e.target.files[0];
+          if (file) {
+            const loadedAudio = window.audioEngine.loadUserAudioFile('meme', file);
+            window.audioEngine.clips['gameover'] = loadedAudio;
+            statusMsg.style.display = 'block';
+            statusMsg.textContent = `✅ Loaded "${file.name}" as Veeramani Audio!`;
+            loadedAudio.play().catch(() => {});
+            game.showSpeechBubble("ஆடியோ லோட் ஆயிருச்சு பா!", "Custom audio loaded!", 2.5, true);
+          }
+        });
+      }
+
+      // Start Button
+      document.getElementById('btn-start').addEventListener('click', () => {
+        game.startOrRestart();
+      });
+
+      // Restart Buttons & Backdrop Handlers with Debounce
+      const btnRestart = document.getElementById('btn-restart');
+      const btnStickyRestart = document.getElementById('btn-sticky-restart');
+      const overOverlay = document.getElementById('over-overlay');
+
+      let restartCooldown = false;
+      const doRestart = (e) => {
+        if (e) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+        if (restartCooldown) return;
+        restartCooldown = true;
+        setTimeout(() => { restartCooldown = false; }, 300);
+        game.startOrRestart();
+      };
+
+      if (btnRestart) {
+        btnRestart.addEventListener('click', doRestart);
+      }
+      if (btnStickyRestart) {
+        btnStickyRestart.addEventListener('click', doRestart);
+      }
+      if (overOverlay) {
+        overOverlay.addEventListener('click', (e) => {
+          // If clicked inside details dropdown or share/menu buttons, don't trigger restart
+          if (e.target.closest('details') || e.target.closest('#btn-share') || e.target.closest('#btn-menu')) {
+            return;
+          }
+          doRestart(e);
+        });
+      }
+
+      // Change Mode / Menu Button
+      document.getElementById('btn-menu').addEventListener('click', () => {
+        document.getElementById('over-overlay').classList.add('hidden');
+        document.getElementById('start-overlay').classList.remove('hidden');
+        game.state = 'START';
+      });
+
+      // Pause Buttons
+      document.getElementById('btn-pause-toggle').addEventListener('click', () => {
+        game.togglePause();
+      });
+      document.getElementById('btn-resume').addEventListener('click', () => {
+        game.togglePause();
+      });
+
+      // SFX Toggle Button
+      const btnSfx = document.getElementById('btn-toggle-sfx');
+      btnSfx.addEventListener('click', () => {
+        const enabled = window.audioEngine.toggleSFX();
+        btnSfx.classList.toggle('active', enabled);
+        btnSfx.textContent = enabled ? '🔊' : '🔇';
+      });
+
+      // Voice Toggle Button
+      const btnVoice = document.getElementById('btn-toggle-voice');
+      btnVoice.addEventListener('click', () => {
+        const enabled = window.audioEngine.toggleVoice();
+        btnVoice.classList.toggle('active', enabled);
+        btnVoice.style.opacity = enabled ? '1' : '0.4';
+      });
+
+      // Fullscreen Button
+      const btnFs = document.getElementById('btn-fullscreen');
+      btnFs.addEventListener('click', () => {
+        const wrap = document.getElementById('stage-wrapper');
+        if (!document.fullscreenElement) {
+          wrap.requestFullscreen().catch(() => {});
+        } else {
+          document.exitFullscreen().catch(() => {});
+        }
+      });
+
+      // Share Score Button
+      document.getElementById('btn-share').addEventListener('click', () => {
+        const text = `🛵 I escaped Swiggy for ${Math.floor(game.distance)}m in Veeramani Run! Can you beat my score? Play here:`;
+        const url = window.location.href;
+
+        if (navigator.share) {
+          navigator.share({
+            title: 'Veeramani Run: Swiggy Chase',
+            text: text,
+            url: url
+          }).catch(() => {});
+        } else {
+          const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(text + ' ' + url)}`;
+          window.open(waUrl, '_blank');
+        }
+      });
+    });
+  </script>
+</body>
+</html>
